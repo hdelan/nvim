@@ -1,0 +1,26 @@
+snippet base "Base makefile"
+
+SHELL = /bin/bash
+CC = gcc
+CFLAGS = -Wall -Wextra -Wno-unused-parameter
+LIBS =
+MAIN = $1
+
+########################################################################
+
+$(MAIN): ${2:Dependencies}
+	$(CC) -o $@ $< $(LIBS) $(CFLAGS)
+
+$(MAIN).o: $(MAIN).c
+	$(CC) -c $< $(LIBS) $(CFLAGS)
+
+$0
+
+clean:
+	rm *.o
+endsnippet
+
+snippet : "Make rule"
+${1:target}: ${2:deps}
+	$(CC) $$0
+endsnippet
