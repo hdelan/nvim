@@ -1,7 +1,7 @@
 filetype plugin indent on
 " show existing tab with 4 spaces width
-set tabstop=2
-set shiftwidth=2
+"set tabstop=2
+"set shiftwidth=2
 set mouse=a
 colorscheme desert
 
