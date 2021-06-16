@@ -5,6 +5,8 @@ filetype plugin indent on
 set mouse=a
 colorscheme desert
 
+set spellfile=~/.config/nvim/spell/en.utf-8.add
+
 " On pressing tab, insert 4 spaces
 set expandtab
 
@@ -19,6 +21,8 @@ let g:vimtex_view_general_viewer = 'zathura'
 
 " set conceallevel=1
 " let g:tex_conceal='abdmg'
+
+Plug 'tomlion/vim-solidity'
 
 " Ultisnips
 Plug 'SirVer/ultisnips'
