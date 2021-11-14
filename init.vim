@@ -54,6 +54,9 @@ let g:DoxygenToolkit_blockHeader="----------------------------------------------
 let g:DoxygenToolkit_blockFooter="----------------------------------------------------------------------------"
 let g:DoxygenToolkit_authorName="Hugh Delaney"
 
+Plug 'frasercrmck/formative.vim'
+let g:fmtv_clang_format_py = '~/llvm/clang/tools/clang-format/clang-format.py'
+
 set spelllang=en_us
 inoremap <C-l> <c-g>u<Esc>[s1z=`]a<c-g>u
 
