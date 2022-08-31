@@ -1,63 +1,89 @@
-filetype plugin indent on
-" show existing tab with 4 spaces width
-"set tabstop=2
-"set shiftwidth=2
+set number
 set mouse=a
-colorscheme desert
+set splitright
 
-set spellfile=~/.config/nvim/spell/en.utf-8.add
+filetype plugin indent on
 
-" On pressing tab, insert 4 spaces
-set expandtab
+set ts=2 sts=2 sw=2 et ai si
+
+set colorcolumn=80
+
+if has('python')
+  noremap <C-I> :pyf /home/hugh/llvm/clang/tools/clang-format/clang-format.py<cr>
+  inoremap <C-I> <c-o>:pyf /home/hugh/llvm/clang/tools/clang-format/clang-format.py<cr>
+elseif has('python3')
+  noremap <C-I> :py3f /home/hugh/llvm/clang/tools/clang-format/clang-format.py<cr>
+  inoremap <C-I> <c-o>:py3f /home/hugh/llvm/clang/tools/clang-format/clang-format.py<cr>
+endif
 
 call plug#begin()
 
-" Vimtex
-Plug 'lervag/vimtex'
-let g:tex_flavor='latex'
-let g:vimtex_quickfix_mode=0
-let g:vimtex_compiler_progname = 'nvr'
-let g:vimtex_view_general_viewer = 'zathura'
-
-" set conceallevel=1
-" let g:tex_conceal='abdmg'
-
-Plug 'tomlion/vim-solidity'
-
-" Ultisnips
-Plug 'SirVer/ultisnips'
-let g:UltiSnipsExpandTrigger = '<tab>'
-let g:UltiSnipsJumpForwardTrigger = '<tab>'
-let g:UltiSnipsJumpBackwardTrigger = '<s-tab>'
-let g:UltiSnipsSnippetDirectories=[$HOME.'/.config/nvim/mysnips']
-
-" Nerdtree
+Plug 'tpope/vim-fugitive'
 Plug 'preservim/nerdtree'
-
-" Matlab
-Plug 'MortenStabenau/matlab-vim'
-let g:matlab_executable = '/home/hugh/MATLAB/R2020b/bin/matlab'
-let g:matlab_panel_size = 50
-
-Plug 'tmux-plugins/vim-tmux'
-
-"Doxygen
-Plug 'vim-scripts/DoxygenToolkit.vim'
-let g:DoxygenToolkit_briefTag_pre="\\brief:       "
-let g:DoxygenToolkit_paramTag_pre="\\param:       "
-let g:DoxygenToolkit_returnTag="\\returns      "
-let g:DoxygenToolkit_fileTag="\\file:        "
-let g:DoxygenToolkit_authorTag="\\author:      "
-let g:DoxygenToolkit_versionTag="\\version:     "
-let g:DoxygenToolkit_dateTag="\\date:        "
-let g:DoxygenToolkit_blockHeader="--------------------------------------------------------------------------"
-let g:DoxygenToolkit_blockFooter="----------------------------------------------------------------------------"
-let g:DoxygenToolkit_authorName="Hugh Delaney"
-
 Plug 'frasercrmck/formative.vim'
-let g:fmtv_clang_format_py = '~/llvm/clang/tools/clang-format/clang-format.py'
-
-set spelllang=en_us
-inoremap <C-l> <c-g>u<Esc>[s1z=`]a<c-g>u
+Plug 'zivyangll/git-blame.vim'
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
 call plug#end()
+
+let g:fmtv_clang_format_py = '/home/hugh/llvm/clang/tools/clang-format/clang-format.py'
+
+" Custom mappings
+let mapleader = " "
+vnoremap <silent>// y/\V<C-R>=escape(@",'/\')<CR><CR>
+nnoremap <silent><leader>_ ddkP
+nnoremap <silent><leader>- ddp
+inoremap <silent><leader><C-u> <esc> bveU <esc> ea
+nnoremap <silent><leader><C-u> bveU <esc> e
+nnoremap <silent><leader>s :call gitblame#echo()<CR>
+inoremap <silent><leader><C-l> <C-g>u<esc>[s1z=`]a<C-g>u
+nnoremap <silent><leader>ev :vs $MYVIMRC<CR>
+nnoremap <silent><leader>sv :source $MYVIMRC<CR>
+nnoremap <silent><leader>cc :call ShowIR("ptx")<CR>
+
+nnoremap <silent><leader>gg <Plug>(coc-implementation)
+nnoremap <silent><leader>gt <Plug>(coc-type-definition)
+nnoremap <silent><leader>gc <Plug>(coc-definition)
+nnoremap <silent><leader>gr <Plug>(coc-references)
+nnoremap <silent><leader>fi <Plug>(coc-fix-current)
+
+set spelllang=en_us
+
+if &diff
+  colorscheme murphy
+endif
+
+
+
+" TODO add support for bc files, spv files
+" TODO add variadic args for cuda gpu version
+" TODO make this into a vim-plug plugin
+function! ShowIR(IRformat)
+  let dpcpp_tmp_ir_folder = "/home/hugh/.tmp_ir"
+  if !isdirectory(dpcpp_tmp_ir_folder)
+    exec join(["!mkdir", dpcpp_tmp_ir_folder])
+  else
+    exec join(["!rm -fr ", dpcpp_tmp_ir_folder, "/*"], "")
+  endif
+
+  if a:IRformat == "ptx" || a:IRformat == "nvbc"
+    let targets = "nvptx64-nvidia-cuda"
+  elseif a:IRformat == "spir"
+    let targets = "spir64-unknown-unknown"
+  endif
+
+  let working_dir = system('pwd')
+  let working_file = expand('%:p')
+
+  exec join(["!cd ", dpcpp_tmp_ir_folder, " && clang++ -fsycl --save-temps -fsycl-targets=", targets, " ", working_file], "")
+
+  if a:IRformat == "ptx"
+    let ptxfile = system(join(["grep PTX -l ", dpcpp_tmp_ir_folder, "/*"], ""))
+    exec join(["vsp", ptxfile])
+  elseif a:IRformat == "nvbc"
+    let bcfile = system(join(["grep clang * ", dpcpp_tmp_ir_folder, "/* | grep "Binary file.*sycl.*bc"], "")[0]
+    echom bcfile
+  endif
+endfunction
+
+echom "(>^.^<)"
