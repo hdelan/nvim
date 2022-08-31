@@ -47,17 +47,16 @@ nnoremap <silent><leader>gc <Plug>(coc-definition)
 nnoremap <silent><leader>gr <Plug>(coc-references)
 nnoremap <silent><leader>fi <Plug>(coc-fix-current)
 
-set spelllang=en_us
-
 if &diff
   colorscheme murphy
 endif
 
 
-
 " TODO add support for bc files, spv files
 " TODO add variadic args for cuda gpu version
 " TODO make this into a vim-plug plugin
+" TODO make this fit with any compiler and command line args
+" TODO get support for -###
 function! ShowIR(IRformat)
   let dpcpp_tmp_ir_folder = "/home/hugh/.tmp_ir"
   if !isdirectory(dpcpp_tmp_ir_folder)
