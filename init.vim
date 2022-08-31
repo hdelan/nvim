@@ -1,5 +1,4 @@
 set number
-set mouse=a
 set splitright
 
 filetype plugin indent on
@@ -54,9 +53,10 @@ endif
 
 " TODO add support for bc files, spv files
 " TODO add variadic args for cuda gpu version
-" TODO make this into a vim-plug plugin
-" TODO make this fit with any compiler and command line args
+" TODO automatically compile in background on saving?
 " TODO get support for -###
+" TODO quickfix list
+" TODO make this into a vim-plug plugin
 function! ShowIR(IRformat)
   let dpcpp_tmp_ir_folder = "/home/hugh/.tmp_ir"
   if !isdirectory(dpcpp_tmp_ir_folder)
