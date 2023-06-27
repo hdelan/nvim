@@ -2,20 +2,12 @@ set number
 set splitright
 set list
 set nowrap
-
 filetype plugin indent on
 set matchpairs+=<:>
 set ts=2 sts=2 sw=2 et ai si
-
 set colorcolumn=80
 
-if has('python')
-  noremap <C-I> :pyf /home/hugh/llvm/clang/tools/clang-format/clang-format.py<cr>
-  inoremap <C-I> <c-o>:pyf /home/hugh/llvm/clang/tools/clang-format/clang-format.py<cr>
-elseif has('python3')
-  noremap <C-I> :py3f /home/hugh/llvm/clang/tools/clang-format/clang-format.py<cr>
-  inoremap <C-I> <c-o>:py3f /home/hugh/llvm/clang/tools/clang-format/clang-format.py<cr>
-endif
+let mapleader = " "
 
 call plug#begin()
 
@@ -34,70 +26,64 @@ Plug 'ryanoasis/vim-devicons'
 
 call plug#end()
 
+" Vim Formative
+if has('python')
+  noremap <C-I> :pyf /home/hugh/llvm/clang/tools/clang-format/clang-format.py<cr>
+  inoremap <C-I> <c-o>:pyf /home/hugh/llvm/clang/tools/clang-format/clang-format.py<cr>
+elseif has('python3')
+  noremap <C-I> :py3f /home/hugh/llvm/clang/tools/clang-format/clang-format.py<cr>
+  inoremap <C-I> <c-o>:py3f /home/hugh/llvm/clang/tools/clang-format/clang-format.py<cr>
+endif
+
 let g:fmtv_clang_format_py = '/home/hugh/llvm/clang/tools/clang-format/clang-format.py'
 let g:fmtv_no_mappings = 1
-
 nnoremap <leader>kk <Plug>FormativeNor
 nnoremap <leader>kk <Plug>FormativeLine
 nnoremap <leader>ka <Plug>FormativeFile
 vnoremap <leader>k <Plug>FormativeVis
 
-" Custom mappings
-let mapleader = " "
-vnoremap <silent><leader>vv y/\V<C-R>=escape(@",'/\')<CR><CR>
-nnoremap <silent><leader>_ ddkP
-nnoremap <silent><leader>- ddp
-inoremap <silent><leader><C-u> <esc> bveU <esc> ea
-nnoremap <silent><leader><C-u> bveU <esc> e
+" Git blame
 nnoremap <silent><leader>s :call gitblame#echo()<CR>
 inoremap <silent><leader><C-l> <C-g>u<esc>[s1z=`]a<C-g>u
+
+" Nvim config
 nnoremap <silent><leader>ev :vs $MYVIMRC<CR>
 nnoremap <silent><leader>sv :source $MYVIMRC<CR>
+
+" My func
 nnoremap <silent><leader>cc :call ShowIR("ptx")<CR>
 nnoremap <silent><leader>sc :call ShowIR("spir")<CR>
 nnoremap <silent><leader>bc :call ShowIR("nvbc")<CR>
-nnoremap <Leader>. :echo synstax#UnderCursor()<CR>
 
+" CoC
 nnoremap <silent><leader>gg <Plug>(coc-implementation)
 nnoremap <silent><leader>gt <Plug>(coc-type-definition)
 nnoremap <silent><leader>gc <Plug>(coc-definition)
 nnoremap <silent><leader>gr <Plug>(coc-references)
 nnoremap <silent><leader>fi <Plug>(coc-fix-current)
+
+" NERDTree
 nnoremap <silent><leader>tt :NERDTree<CR>
-nnoremap <silent><leader>tr :terminal<CR>
-nnoremap <silent><leader>qq :q<CR>
-nnoremap <silent><leader>wq :wq<CR>
-nnoremap <silent><leader><leader> <C-w>
+
+" Digraphs
 inoremap <silent><leader>bb <C-K>0M
 inoremap <silent><leader>yyy <C-K>OK
 inoremap <silent><leader>xxx <C-K>XX
-"noremap  <up> <nop> 
-"noremap  <down> <nop>
-"noremap  <left> <nop>
-"noremap  <right> <nop>
-nmap <leader>1 <Plug>BuffetSwitch(1)
-nmap <leader>2 <Plug>BuffetSwitch(2)
-nmap <leader>3 <Plug>BuffetSwitch(3)
-nmap <leader>4 <Plug>BuffetSwitch(4)
-nmap <leader>5 <Plug>BuffetSwitch(5)
-nmap <leader>6 <Plug>BuffetSwitch(6)
-nmap <leader>7 <Plug>BuffetSwitch(7)
-nmap <leader>8 <Plug>BuffetSwitch(8)
-nmap <leader>9 <Plug>BuffetSwitch(9)
-nmap <leader>0 <Plug>BuffetSwitch(10)
+
+" Window movements
+nnoremap <silent><leader><leader> <C-w>
 noremap <Tab> :bn<CR>
 noremap <S-Tab> :bp<CR>
-inoremap <C-L> <C-K>
 noremap <leader>dd :bd<CR>
 nnoremap <silent><leader>sw :set wrap<CR>
 nnoremap <silent><leader>nw :set nowrap<CR>
-tnoremap <silent><esc> <C-\><C-n>
+nnoremap <silent><leader>qq :q<CR>
+nnoremap <silent><leader>wq :wq<CR>
+nnoremap <silent><leader>jj :e ~/.local/journal.md<CR>
 
-function! StartUp()
-    if 0 == argc()
-        NERDTree
-    end
-endfunction
+" Terminal
+nnoremap <silent><leader>tr :terminal<CR>
+tnoremap <silent><esc> <C-\><C-n>
 
 " TODO add variadic args for cuda gpu version
 " TODO automatically compile in background on saving?
@@ -139,6 +125,10 @@ function! ShowIR(IRformat)
     exec join(["!cp ", dpcpp_tmp_ir_folder, "/a.out ."], "")
   endif
 endfunction
+
+if 0 == argc()
+    autocmd VimEnter * NERDTree
+end
 
 echom "(>^.^<)"
 
