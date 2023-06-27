@@ -28,6 +28,9 @@ Plug 'benknoble/vim-synstax'
 Plug 'brgmnn/vim-opencl'
 Plug 'bagrat/vim-buffet'
 Plug 'rhysd/vim-llvm'
+Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
+Plug 'Xuyuanp/nerdtree-git-plugin'
+Plug 'ryanoasis/vim-devicons'
 
 call plug#end()
 
@@ -85,11 +88,9 @@ nmap <leader>0 <Plug>BuffetSwitch(10)
 noremap <Tab> :bn<CR>
 noremap <S-Tab> :bp<CR>
 inoremap <C-L> <C-K>
-noremap <leader>v :vs<CR>
 noremap <leader>dd :bd<CR>
 nnoremap <silent><leader>sw :set wrap<CR>
 nnoremap <silent><leader>nw :set nowrap<CR>
-nnoremap <silent><leader>sp :sp<CR>
 tnoremap <silent><esc> <C-\><C-n>
 
 function! StartUp()
