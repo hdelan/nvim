@@ -6,6 +6,7 @@ filetype plugin indent on
 set matchpairs+=<:>
 set ts=2 sts=2 sw=2 et ai si
 set colorcolumn=80
+set mouse=a
 
 let mapleader = " "
 
@@ -66,24 +67,40 @@ nnoremap <silent><leader>fi <Plug>(coc-fix-current)
 nnoremap <silent><leader>tt :NERDTree<CR>
 
 " Digraphs
-inoremap <silent><leader>bb <C-K>0M
-inoremap <silent><leader>yyy <C-K>OK
-inoremap <silent><leader>xxx <C-K>XX
+inoremap <silent><leader>bb <C-K>Sb
+inoremap <silent><leader>yy <C-K>OK
+inoremap <silent><leader>xx <C-K>XX
 
 " Window movements
+nnoremap <silent><leader>w <C-w>
 nnoremap <silent><leader><leader> <C-w>
 noremap <Tab> :bn<CR>
 noremap <S-Tab> :bp<CR>
 noremap <leader>dd :bd<CR>
-nnoremap <silent><leader>sw :set wrap<CR>
-nnoremap <silent><leader>nw :set nowrap<CR>
 nnoremap <silent><leader>qq :q<CR>
 nnoremap <silent><leader>wq :wq<CR>
+
+" General stuff
+nnoremap <silent><leader>sw :set wrap<CR>
+nnoremap <silent><leader>nw :set nowrap<CR>
 nnoremap <silent><leader>jj :e ~/.local/journal.md<CR>
+nnoremap <silent><leader>sm :set mouse=a<CR>
+nnoremap <silent><leader>nm :set mouse=<CR>
 
 " Terminal
 nnoremap <silent><leader>tr :terminal<CR>
 tnoremap <silent><esc> <C-\><C-n>
+
+" use <tab> to trigger completion and navigate to the next complete item
+function! CheckBackspace() abort
+  let col = col('.') - 1
+  return !col || getline('.')[col - 1]  =~# '\s'
+endfunction
+
+inoremap <silent><expr> <Tab>
+      \ coc#pum#visible() ? coc#pum#next(1) :
+      \ CheckBackspace() ? "\<Tab>" :
+      \ coc#refresh()
 
 " TODO add variadic args for cuda gpu version
 " TODO automatically compile in background on saving?
@@ -129,6 +146,18 @@ endfunction
 if 0 == argc()
     autocmd VimEnter * NERDTree
 end
+
+if &t_Co >= 256
+    highlight TickHighlight ctermfg=darkgreen guifg=#ff0000
+    highlight XHighlight ctermfg=red guifg=#ff0000
+    highlight DotHighlight ctermfg=darkblue guifg=#ff0000
+
+    syntax match TickHighlight "✓"
+    syntax match XHighlight "✗"
+    syntax match DotHighlight "∙"
+    syntax match DotHighlight "→"
+endif
+
 
 echom "(>^.^<)"
 
