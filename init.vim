@@ -24,6 +24,7 @@ Plug 'rhysd/vim-llvm'
 Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
 Plug 'Xuyuanp/nerdtree-git-plugin'
 Plug 'ryanoasis/vim-devicons'
+Plug 'lifepillar/vim-solarized8'
 
 call plug#end()
 
@@ -158,6 +159,10 @@ if &t_Co >= 256
     syntax match DotHighlight "→"
 endif
 
+colorscheme solarized8_flat
+set background=light
+let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
+let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
 
 echom "(>^.^<)"
 
