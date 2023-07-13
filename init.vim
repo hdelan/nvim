@@ -13,18 +13,20 @@ let mapleader = " "
 call plug#begin()
 
 Plug 'tpope/vim-fugitive'
-Plug 'preservim/nerdtree'
+Plug 'nvim-tree/nvim-tree.lua'
 Plug 'frasercrmck/formative.vim'
 Plug 'zivyangll/git-blame.vim'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'benknoble/vim-synstax'
 Plug 'brgmnn/vim-opencl'
-Plug 'bagrat/vim-buffet'
 Plug 'rhysd/vim-llvm'
 Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
 Plug 'Xuyuanp/nerdtree-git-plugin'
-Plug 'ryanoasis/vim-devicons'
+Plug 'nvim-tree/nvim-web-devicons'
 Plug 'lifepillar/vim-solarized8'
+Plug 'merlinrebrovic/focus.vim'
+Plug 'lewis6991/gitsigns.nvim' " OPTIONAL: for git status
+Plug 'romgrk/barbar.nvim'
 
 call plug#end()
 
@@ -36,7 +38,6 @@ elseif has('python3')
   noremap <C-I> :py3f /home/hugh/llvm/clang/tools/clang-format/clang-format.py<cr>
   inoremap <C-I> <c-o>:py3f /home/hugh/llvm/clang/tools/clang-format/clang-format.py<cr>
 endif
-
 let g:fmtv_clang_format_py = '/home/hugh/llvm/clang/tools/clang-format/clang-format.py'
 let g:fmtv_no_mappings = 1
 nnoremap <leader>kk <Plug>FormativeNor
@@ -63,9 +64,18 @@ nnoremap <silent><leader>gt <Plug>(coc-type-definition)
 nnoremap <silent><leader>gc <Plug>(coc-definition)
 nnoremap <silent><leader>gr <Plug>(coc-references)
 nnoremap <silent><leader>fi <Plug>(coc-fix-current)
+" use <tab> to trigger completion and navigate to the next complete item
+function! CheckBackspace() abort
+  let col = col('.') - 1
+  return !col || getline('.')[col - 1]  =~# '\s'
+endfunction
+inoremap <silent><expr> <Tab>
+      \ coc#pum#visible() ? coc#pum#next(1) :
+      \ CheckBackspace() ? "\<Tab>" :
+      \ coc#refresh()
 
-" NERDTree
-nnoremap <silent><leader>tt :NERDTree<CR>
+" NvimTree
+nnoremap <silent><leader>tt :NvimTreeOpen<CR>
 
 " Digraphs
 inoremap <silent><leader>bb <C-K>Sb
@@ -81,6 +91,10 @@ noremap <leader>dd :bd<CR>
 nnoremap <silent><leader>qq :q<CR>
 nnoremap <silent><leader>wq :wq<CR>
 
+" Vim focus
+let g:focus_use_default_mapping = 0
+nmap <silent><leader>ff <Plug>FocusModeToggle
+
 " General stuff
 nnoremap <silent><leader>sw :set wrap<CR>
 nnoremap <silent><leader>nw :set nowrap<CR>
@@ -91,17 +105,6 @@ nnoremap <silent><leader>nm :set mouse=<CR>
 " Terminal
 nnoremap <silent><leader>tr :terminal<CR>
 tnoremap <silent><esc> <C-\><C-n>
-
-" use <tab> to trigger completion and navigate to the next complete item
-function! CheckBackspace() abort
-  let col = col('.') - 1
-  return !col || getline('.')[col - 1]  =~# '\s'
-endfunction
-
-inoremap <silent><expr> <Tab>
-      \ coc#pum#visible() ? coc#pum#next(1) :
-      \ CheckBackspace() ? "\<Tab>" :
-      \ coc#refresh()
 
 " TODO add variadic args for cuda gpu version
 " TODO automatically compile in background on saving?
@@ -145,24 +148,60 @@ function! ShowIR(IRformat)
 endfunction
 
 if 0 == argc()
-    autocmd VimEnter * NERDTree
+  autocmd VimEnter * NvimTreeOpen
 end
 
 if &t_Co >= 256
-    highlight TickHighlight ctermfg=darkgreen guifg=#ff0000
-    highlight XHighlight ctermfg=red guifg=#ff0000
-    highlight DotHighlight ctermfg=darkblue guifg=#ff0000
+  highlight TickHighlight ctermfg=darkgreen guifg=#ff0000
+  highlight XHighlight ctermfg=red guifg=#ff0000
+  highlight DotHighlight ctermfg=darkblue guifg=#ff0000
 
-    syntax match TickHighlight "✓"
-    syntax match XHighlight "✗"
-    syntax match DotHighlight "∙"
-    syntax match DotHighlight "→"
+  syntax match TickHighlight "✓"
+  syntax match XHighlight "✗"
+  syntax match DotHighlight "∙"
+  syntax match DotHighlight "→"
 endif
 
 colorscheme solarized8_flat
 set background=light
 let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
 let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
+"set termguicolors
+
+
+function! MarkdownTodoHighlight()
+  "highlight Todo ctermfg=213
+  "match Todo /\stodo\|TODO\|Todo\s/
+endfunction
+
+autocmd FileType markdown call MarkdownTodoHighlight()
+
+" Nvim tree
+lua <<EOF
+-- disable netrw at the very start of your init.lua
+vim.g.loaded_netrw = 1
+vim.g.loaded_netrwPlugin = 1
+
+require("nvim-tree").setup({
+actions = {
+  open_file = {
+    window_picker = {
+      enable = false,
+    },
+  },
+},
+sort_by = "case_sensitive",
+view = {
+  width = 30,
+  },
+renderer = {
+  group_empty = true,
+  },
+filters = {
+  dotfiles = true,
+  },
+})
+EOF
 
 echom "(>^.^<)"
 
