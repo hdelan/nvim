@@ -20,13 +20,13 @@ Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'benknoble/vim-synstax'
 Plug 'brgmnn/vim-opencl'
 Plug 'rhysd/vim-llvm'
-Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
-Plug 'Xuyuanp/nerdtree-git-plugin'
 Plug 'nvim-tree/nvim-web-devicons'
 Plug 'lifepillar/vim-solarized8'
 Plug 'merlinrebrovic/focus.vim'
 Plug 'lewis6991/gitsigns.nvim' " OPTIONAL: for git status
 Plug 'romgrk/barbar.nvim'
+Plug 'airblade/vim-gitgutter'
+Plug 'https://github.com/adelarsq/vim-matchit'
 
 call plug#end()
 
@@ -57,6 +57,9 @@ nnoremap <silent><leader>sv :source $MYVIMRC<CR>
 nnoremap <silent><leader>cc :call ShowIR("ptx")<CR>
 nnoremap <silent><leader>sc :call ShowIR("spir")<CR>
 nnoremap <silent><leader>bc :call ShowIR("nvbc")<CR>
+
+" Gitgutter
+nnoremap <silent><leader>ph :GitGutterPreviewHunk<CR>
 
 " CoC
 nnoremap <silent><leader>gg <Plug>(coc-implementation)
@@ -98,6 +101,8 @@ nmap <silent><leader>ff <Plug>FocusModeToggle
 " General stuff
 nnoremap <silent><leader>sw :set wrap<CR>
 nnoremap <silent><leader>nw :set nowrap<CR>
+nnoremap <silent><leader>sn :set number<CR>
+nnoremap <silent><leader>nn :set nonumber<CR>
 nnoremap <silent><leader>jj :e ~/.local/journal.md<CR>
 nnoremap <silent><leader>sm :set mouse=a<CR>
 nnoremap <silent><leader>nm :set mouse=<CR>
