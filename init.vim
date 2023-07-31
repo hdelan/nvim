@@ -12,6 +12,7 @@ let mapleader = " "
 
 call plug#begin()
 
+Plug 'lervag/vimtex'
 Plug 'tpope/vim-fugitive'
 Plug 'nvim-tree/nvim-tree.lua'
 Plug 'frasercrmck/formative.vim'
