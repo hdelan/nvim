@@ -32,14 +32,25 @@ Plug 'https://github.com/adelarsq/vim-matchit'
 call plug#end()
 
 " Vim Formative
-if has('python')
-  noremap <C-I> :pyf /home/hugh/llvm/clang/tools/clang-format/clang-format.py<cr>
-  inoremap <C-I> <c-o>:pyf /home/hugh/llvm/clang/tools/clang-format/clang-format.py<cr>
-elseif has('python3')
-  noremap <C-I> :py3f /home/hugh/llvm/clang/tools/clang-format/clang-format.py<cr>
-  inoremap <C-I> <c-o>:py3f /home/hugh/llvm/clang/tools/clang-format/clang-format.py<cr>
-endif
+if has('mac')
+  if has('python')
+    noremap <C-I> :pyf /Users/hugh/llvm/clang/tools/clang-format/clang-format.py<cr>
+    inoremap <C-I> <c-o>:pyf /Users/hugh/llvm/clang/tools/clang-format/clang-format.py<cr>
+  elseif has('python3')
+    noremap <C-I> :py3f /Users/hugh/llvm/clang/tools/clang-format/clang-format.py<cr>
+    inoremap <C-I> <c-o>:py3f /Users/hugh/llvm/clang/tools/clang-format/clang-format.py<cr>
+  endif
+  let g:fmtv_clang_format_py = '/Users/hugh/llvm/clang/tools/clang-format/clang-format.py'
+else
+  if has('python')
+    noremap <C-I> :pyf /home/hugh/llvm/clang/tools/clang-format/clang-format.py<cr>
+    inoremap <C-I> <c-o>:pyf /home/hugh/llvm/clang/tools/clang-format/clang-format.py<cr>
+  elseif has('python3')
+    noremap <C-I> :py3f /home/hugh/llvm/clang/tools/clang-format/clang-format.py<cr>
+    inoremap <C-I> <c-o>:py3f /home/hugh/llvm/clang/tools/clang-format/clang-format.py<cr>
+  endif
 let g:fmtv_clang_format_py = '/home/hugh/llvm/clang/tools/clang-format/clang-format.py'
+endif
 let g:fmtv_no_mappings = 1
 nnoremap <leader>kk <Plug>FormativeNor
 nnoremap <leader>kk <Plug>FormativeLine
