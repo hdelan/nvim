@@ -102,7 +102,6 @@ nnoremap <silent><leader>w <C-w>
 nnoremap <silent><leader><leader> <C-w>
 noremap <Tab> :bn<CR>
 noremap <S-Tab> :bp<CR>
-noremap <leader>dd :bd<CR>
 nnoremap <silent><leader>qq :q<CR>
 nnoremap <silent><leader>wq :wq<CR>
 
@@ -144,7 +143,7 @@ function! ShowIR(IRformat)
 
   let working_file = expand('%:p')
 
-  exec join(["!cd ", dpcpp_tmp_ir_folder, " && clang++ -fsycl --save-temps -fsycl-targets=", targets, " ", working_file], "")
+  exec join(["!cd ", dpcpp_tmp_ir_folder, " && clang++ -fsycl -fsycl-disable-range-rounding --save-temps -fsycl-targets=", targets, " ", working_file], "")
 
   if a:IRformat == "ptx"
     let ptxfile = trim(system(join(["grep PTX -l ", dpcpp_tmp_ir_folder, "/*"], "")))
