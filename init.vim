@@ -143,7 +143,7 @@ function! ShowIR(IRformat)
 
   let working_file = expand('%:p')
 
-  exec join(["!cd ", dpcpp_tmp_ir_folder, " && clang++ -fsycl -fsycl-disable-range-rounding --save-temps -fsycl-targets=", targets, " ", working_file], "")
+  exec join(["!cd ", dpcpp_tmp_ir_folder, " && clang++ -fsycl -Xclang -fsycl-disable-range-rounding --save-temps -fsycl-targets=", targets, " ", working_file], "")
 
   if a:IRformat == "ptx"
     let ptxfile = trim(system(join(["grep PTX -l ", dpcpp_tmp_ir_folder, "/*"], "")))
