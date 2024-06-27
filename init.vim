@@ -115,6 +115,7 @@ nnoremap <silent><leader>nn :set nonumber<CR>
 nnoremap <silent><leader>jj :e ~/.local/journal.md<CR>
 nnoremap <silent><leader>sm :set mouse=a<CR>
 nnoremap <silent><leader>nm :set mouse=<CR>
+nnoremap <silent><leader>ww :%s/\ \+$//g<CR>
 
 " Terminal
 nnoremap <silent><leader>tr :terminal<CR>
