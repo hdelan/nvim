@@ -15,6 +15,7 @@ call plug#begin()
 Plug 'lervag/vimtex'
 Plug 'tpope/vim-fugitive'
 Plug 'nvim-tree/nvim-tree.lua'
+Plug 'hdelan/offload-explorer.vim'
 Plug 'frasercrmck/formative.vim'
 Plug 'zivyangll/git-blame.vim'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
@@ -66,9 +67,6 @@ nnoremap <silent><leader>ev :vs $MYVIMRC<CR>
 nnoremap <silent><leader>sv :source $MYVIMRC<CR>
 
 " My func
-nnoremap <silent><leader>cc :call ShowIR("ptx")<CR>
-nnoremap <silent><leader>sc :call ShowIR("spir")<CR>
-nnoremap <silent><leader>bc :call ShowIR("nvbc")<CR>
 
 " Gitgutter
 nnoremap <silent><leader>ph :GitGutterPreviewHunk<CR>
@@ -122,50 +120,11 @@ nnoremap <silent><leader>nm :set mouse=<CR>
 nnoremap <silent><leader>tr :terminal<CR>
 tnoremap <silent><esc> <C-\><C-n>
 
-" TODO add variadic args for cuda gpu version
-" TODO automatically compile in background on saving?
-" TODO get support for -###
-" TODO quickfix list
-" TODO make this into a vim-plug plugin
-function! ShowIR(IRformat)
-  let dpcpp_tmp_ir_folder = "/home/hugh/.tmp_ir"
-  if !isdirectory(dpcpp_tmp_ir_folder)
-    exec join(["!mkdir", dpcpp_tmp_ir_folder])
-  elseif system(join(["ls ", dpcpp_tmp_ir_folder, " | wc -l"], "")) > 0
-    exec join(["!rm -fr ", dpcpp_tmp_ir_folder, "/*"], "")
-  endif
-
-  if a:IRformat == "ptx" || a:IRformat == "nvbc"
-    let targets = "nvptx64-nvidia-cuda"
-  elseif a:IRformat == "spir"
-    let targets = "spir64-unknown-unknown"
-  endif
-
-  let working_file = expand('%:p')
-
-  exec join(["!cd ", dpcpp_tmp_ir_folder, " && clang++ -fsycl -Xclang -fsycl-disable-range-rounding -mllvm -enable-global-offset=false --save-temps -fsycl-targets=", targets, " ", working_file], "")
-
-  if a:IRformat == "ptx"
-    let ptxfile = trim(system(join(["grep PTX -l ", dpcpp_tmp_ir_folder, "/*"], "")))
-    exec join(["vsp", ptxfile])
-  elseif a:IRformat == "nvbc" || a:IRformat == "spirbc"
-    let bcfile = split(systemlist(join(["grep \"clang\" ", dpcpp_tmp_ir_folder, "/* | grep \"Binary file.*sycl.*bc\""], ""))[0])[2]
-    exec join(["!llvm-dis ", bcfile, " -o ", bcfile, ".ll"], "")
-    exec join(["vsp ", bcfile, ".ll"], "")
-  elseif a:IRformat == "spir"
-    let spirfile = trim(system(join(["head -n 1 ", dpcpp_tmp_ir_folder, "/*sycl-spir64-unknown-unknown-*.txt"], "")))
-    echom join(["!spirv-dis ", spirfile, " -o ", dpcpp_tmp_ir_folder, "/tmp_spir.spv.ll"], "")
-    exec join(["!spirv-dis ", spirfile, " -o ", dpcpp_tmp_ir_folder, "/tmp_spir.spv.ll"], "")
-    exec join(["vsp ", dpcpp_tmp_ir_folder, "/tmp_spir.spv.ll"], "")
-  endif
-  if system(join(["ls ", dpcpp_tmp_ir_folder, "/a.out | wc -l"], "")) > 0
-    exec join(["!cp ", dpcpp_tmp_ir_folder, "/a.out ."], "")
-  endif
-endfunction
-
 if 0 == argc()
   autocmd VimEnter * NvimTreeOpen
 end
+
+autocmd BufRead,BufNewFile *.ptx setfiletype asm
 
 if &t_Co >= 256
   highlight TickHighlight ctermfg=darkgreen guifg=#ff0000
